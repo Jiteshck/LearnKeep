@@ -97,10 +97,8 @@ Make sure you have:
 Open terminal / command prompt:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/LearnKeep.git
+git clone https://github.com/Jiteshck/LearnKeep
 ```
-
-Replace `YOUR_USERNAME` with your GitHub username.
 
 ---
 
@@ -143,33 +141,13 @@ If you modify the database schema:
 
 ---
 
-# 📸 Screenshots (Optional)
-
-You can add screenshots like this:
-
-```
-screenshots/
-├── main_screen.png
-├── add_topic.png
-└── edit_topic.png
-```
-
-Add inside README:
-
-```markdown
-![Main Screen](screenshots/main_screen.png)
-```
-
----
-
 # 🔮 Future Improvements
 
-- Dark mode toggle
-- Cloud backup (Firebase)
+- Cloud backup (MongoDB)
 - User authentication
 - Analytics dashboard
-- MVVM architecture refactor
-- Play Store release
+- Login Page
+- Test base on confidence level
 
 ---
 
@@ -180,6 +158,3 @@ Android Developer | Java | Room | UI/UX Enthusiast
 
 ---
 
-# ⭐ Support
-
-If you like this project, consider giving it a ⭐ on GitHub.
