@@ -71,6 +71,7 @@ public class TopicDetailsActivity extends AppCompatActivity {
         // Views
         etTitle = findViewById(R.id.etTitle);
         etNotes = findViewById(R.id.etNotes);
+        etNotes.setMovementMethod(new android.text.method.ScrollingMovementMethod());
         txtYoutubeLink = findViewById(R.id.txtYoutubeLink);
         txtAttachmentStatus = findViewById(R.id.txtAttachmentStatus);
         chipGroupTags = findViewById(R.id.chipGroupTags);
@@ -79,6 +80,11 @@ public class TopicDetailsActivity extends AppCompatActivity {
         confidenceContainer = findViewById(R.id.confidenceContainer);
         txtConfidenceValue = findViewById(R.id.txtConfidenceValue);
         imgTopicIcon = findViewById(R.id.imgTopicIcon);
+
+        etNotes.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
 
         // RecyclerView
         recyclerAttachments.setLayoutManager(

@@ -78,6 +78,12 @@ public class AddKnowledgeActivity extends AppCompatActivity {
         txtConfidenceValue = findViewById(R.id.txtConfidenceValue);
         imgTopicIcon = findViewById(R.id.imgTopicIcon);
         updateAutoIcon();
+        EditText etNotes = findViewById(R.id.etNotes);
+        etNotes.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+        etNotes.setMovementMethod(new android.text.method.ScrollingMovementMethod());
 
 
         // Confidence selector
