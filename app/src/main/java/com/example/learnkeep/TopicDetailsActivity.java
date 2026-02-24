@@ -413,6 +413,12 @@ public class TopicDetailsActivity extends AppCompatActivity {
                 .knowledgeDao()
                 .update(entity);
 
+        ReminderScheduler.scheduleReminder(
+                this,
+                entity.id,
+                entity.title,
+                selectedConfidence
+        );
         finish();
     }
 
@@ -421,7 +427,7 @@ public class TopicDetailsActivity extends AppCompatActivity {
             File f = new File(path);
             if (f.exists()) f.delete();
         }
-
+        ReminderScheduler.cancelReminder(this, entity.id);
         AppDatabase.getInstance(this)
                 .knowledgeDao()
                 .delete(entity);

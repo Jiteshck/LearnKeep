@@ -361,6 +361,13 @@ public class AddKnowledgeActivity extends AppCompatActivity {
         entity.createdAt = System.currentTimeMillis();
 
         AppDatabase.getInstance(this).knowledgeDao().insert(entity);
+        int id = (int) entity.createdAt; // temporary unique ID
+        ReminderScheduler.scheduleReminder(
+                this,
+                id,
+                entity.title,
+                selectedConfidence
+        );
         finish();
     }
 
