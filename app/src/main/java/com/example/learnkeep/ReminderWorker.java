@@ -6,6 +6,8 @@ import androidx.core.content.ContextCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.Context;
 import android.os.Build;
 
@@ -27,12 +29,24 @@ public class ReminderWorker extends Worker {
 
         createNotificationChannel();
 
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                getApplicationContext(),
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext(), "study_channel")
                         .setSmallIcon(R.drawable.ic_default)
                         .setContentTitle("Study Reminder 📚")
                         .setContentText("Revise: " + title)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
 
         NotificationManagerCompat manager =
                 NotificationManagerCompat.from(getApplicationContext());

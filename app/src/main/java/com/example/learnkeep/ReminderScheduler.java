@@ -25,7 +25,7 @@ public class ReminderScheduler {
 
         OneTimeWorkRequest work =
                 new OneTimeWorkRequest.Builder(ReminderWorker.class)
-                        .setInitialDelay(days, TimeUnit.DAYS)
+                        .setInitialDelay(days, TimeUnit.MINUTES)
                         .setInputData(data)
                         .build();
 
