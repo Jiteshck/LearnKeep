@@ -111,7 +111,10 @@ public class TopicDetailsActivity extends AppCompatActivity {
         entity = AppDatabase.getInstance(this)
                 .knowledgeDao()
                 .getById(topicId);
-
+        if (entity == null) {
+            finish();
+            return;
+        }
         int iconRes = TopicIconHelper.getIconFromTags(entity.tags);
         imgTopicIcon.setImageResource(iconRes);
 
@@ -419,6 +422,7 @@ public class TopicDetailsActivity extends AppCompatActivity {
                 entity.title,
                 selectedConfidence
         );
+
         finish();
     }
 

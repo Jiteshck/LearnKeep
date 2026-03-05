@@ -38,6 +38,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation("androidx.work:work-runtime:2.9.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

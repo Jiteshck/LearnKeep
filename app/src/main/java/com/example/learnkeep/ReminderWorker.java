@@ -17,31 +17,28 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 public class ReminderWorker extends Worker {
-
     public ReminderWorker(Context context, WorkerParameters params) {
         super(context, params);
     }
-
     @Override
     public Result doWork() {
 
         String title = getInputData().getString("title");
-
+        int topicId = getInputData().getInt("topicId", 0);
+        if (title == null) title = "Your topic";
         createNotificationChannel();
-
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 getApplicationContext(),
-                0,
+                topicId,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
-
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext(), "study_channel")
-                        .setSmallIcon(R.drawable.ic_default)
+                        .setSmallIcon(R.drawable.learnkeep_logo)
                         .setContentTitle("Study Reminder 📚")
                         .setContentText("Revise: " + title)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -52,20 +49,18 @@ public class ReminderWorker extends Worker {
                 NotificationManagerCompat.from(getApplicationContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-
             if (ContextCompat.checkSelfPermission(
                     getApplicationContext(),
                     Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED) {
-                manager.notify((int) System.currentTimeMillis(), builder.build());
+
+                manager.notify(topicId, builder.build());
             }
         } else {
-            manager.notify((int) System.currentTimeMillis(), builder.build());
+            manager.notify(topicId, builder.build());
         }
-
         return Result.success();
     }
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel =
@@ -74,10 +69,8 @@ public class ReminderWorker extends Worker {
                             "Study Reminder",
                             NotificationManager.IMPORTANCE_HIGH
                     );
-
             NotificationManager manager =
                     getApplicationContext().getSystemService(NotificationManager.class);
-
             manager.createNotificationChannel(channel);
         }
     }

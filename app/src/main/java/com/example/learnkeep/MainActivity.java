@@ -1,38 +1,57 @@
 package com.example.learnkeep;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerTopics;
-    private List<KnowledgeEntity> fullList = new ArrayList<>();
-    private TopicAdapter adapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //Always Dark mode
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FloatingActionButton fab = findViewById(R.id.fabAdd);
+        fab.setOnClickListener(v ->
+                startActivity(new Intent(this, AddKnowledgeActivity.class))
+        );
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+            if (item.getItemId() == R.id.nav_topics) {
+                selectedFragment = new TopicsFragment();
+            }
+            if (item.getItemId() == R.id.nav_stats) {
+                selectedFragment = new StatsFragment();
+            }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, selectedFragment)
+                    .commit();
+            return true;
+        });
+
+        // Default screen
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, new TopicsFragment())
+                .commit();
+
+        // Notification permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -45,78 +64,5 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         }
-
-        recyclerTopics = findViewById(R.id.recyclerTopics);
-        recyclerTopics.setLayoutManager(new LinearLayoutManager(this));
-        EditText searchBox = findViewById(R.id.searchBox);
-        ImageView btnClear = findViewById(R.id.btnClearSearch);
-
-        searchBox.addTextChangedListener(new android.text.TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    btnClear.setVisibility(View.VISIBLE);
-                } else {
-                    btnClear.setVisibility(View.GONE);
-                }
-                filterTopics(s.toString());
-            }
-            @Override
-            public void afterTextChanged(android.text.Editable s) {}
-        });
-        btnClear.setOnClickListener(v -> searchBox.setText(""));
-
-        searchBox.addTextChangedListener(new android.text.TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterTopics(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(android.text.Editable s) {}
-        });
-
-        findViewById(R.id.fabAdd).setOnClickListener(v ->
-                startActivity(new Intent(this, AddKnowledgeActivity.class))
-        );
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadTopics();
-    }
-
-    private void loadTopics() {
-
-        fullList = AppDatabase.getInstance(this)
-                .knowledgeDao()
-                .getAll();
-
-        adapter = new TopicAdapter(fullList);
-        recyclerTopics.setAdapter(adapter);
-    }
-    private void filterTopics(String query) {
-        if (adapter == null) return;
-        List<KnowledgeEntity> filteredList = new ArrayList<>();
-
-        for (KnowledgeEntity item : fullList) {
-            if (item.title.toLowerCase().contains(query.toLowerCase())
-                    || (item.tags != null &&
-                    item.tags.toLowerCase().contains(query.toLowerCase()))) {
-
-                filteredList.add(item);
-            }
-        }
-        adapter = new TopicAdapter(filteredList);
-        recyclerTopics.setAdapter(adapter);
     }
 }
-
