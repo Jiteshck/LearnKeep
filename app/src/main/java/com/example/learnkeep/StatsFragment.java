@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import androidx.fragment.app.Fragment;
 
@@ -15,6 +17,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,8 @@ public class StatsFragment extends Fragment {
     TextView txtStrongSubjects;
     TextView txtWeakSubjects;
     LineChart chart;
+    RecyclerView recyclerReview;
+    ArrayList<ReviewItem> reviewList = new ArrayList<>();
 
     public StatsFragment(){}
     @Override
@@ -42,6 +47,8 @@ public class StatsFragment extends Fragment {
         txtStrongSubjects = view.findViewById(R.id.txtStrongSubjects);
         txtWeakSubjects = view.findViewById(R.id.txtWeakSubjects);
         chart = view.findViewById(R.id.chart);
+        recyclerReview = view.findViewById(R.id.recyclerReview);
+        recyclerReview.setLayoutManager(new LinearLayoutManager(getContext()));
 
         chart.setNoDataText("No study data yet");
         loadStats();
@@ -54,8 +61,8 @@ public class StatsFragment extends Fragment {
                     AppDatabase.getInstance(requireContext())
                             .knowledgeDao()
                             .getAll();
-            txtTopicsCount.setText(String.valueOf(topics.size()));
             requireActivity().runOnUiThread(() -> {
+                txtTopicsCount.setText(String.valueOf(topics.size()));
                 int reviews = 0;
                 for (KnowledgeEntity t : topics) {
                     try {
@@ -65,7 +72,48 @@ public class StatsFragment extends Fragment {
                     } catch (Exception ignored) {}
                 }
                 txtReviewsDue.setText(String.valueOf(reviews));
+                reviewList.clear();
 
+                long now = System.currentTimeMillis();
+                for (KnowledgeEntity t : topics) {
+                    int confidence = 5;
+                    try {
+                        confidence = Integer.parseInt(t.confidence);
+                    } catch (Exception ignored) {}
+
+                    int days;
+                    if (confidence <= 3) days = 1;
+                    else if (confidence <= 6) days = 3;
+                    else if (confidence <= 8) days = 7;
+                    else days = 14;
+                    long reviewTime = t.createdAt + (days * 24L * 60 * 60 * 1000);
+                    long diff = reviewTime - now;
+
+                    String day;
+                    int priority;
+                    if (diff < 0){
+                        day = "Overdue";
+                        priority = 0;
+                    }
+                    else if (diff <= 86400000) {
+                        day = "Today";
+                        priority = 1;
+                    }
+                    else if (diff <= 2 * 86400000) {
+                        day = "Tomorrow";
+                        priority = 2;
+                    }
+                    else {
+                        day = "Upcoming";
+                        priority = 3;
+                    }
+                    reviewList.add(
+                            new ReviewItem(t.title,day,t.tags,priority)
+                    );
+                }
+                reviewList.sort((a, b) -> a.priority - b.priority);
+                ReviewAdapter adapter = new ReviewAdapter(reviewList);
+                recyclerReview.setAdapter(adapter);
                 calculateRetention(topics);
                 calculateStreak(topics);
                 analyzeSubjects(topics);
