@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F3F4F9"
-    android:fitsSystemWindows="true">
+    android:background="#F3F4F9">
 
     <!-- Title -->
-    <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:text="Study Status"
-        android:textColor="#3B28CC"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Scroll Area -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Study Status"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#3B28CC"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track your learning progress"
+            android:textSize="14sp"
+            android:textColor="#6B7280"/>
+
+    </LinearLayout>
+
+    <!-- SCROLL CONTENT -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -34,92 +46,176 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:paddingBottom="100dp">
+            android:padding="16dp">
 
-            <!-- Stats Cards -->
+            <!-- ROW 1 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Weekly Streak -->
-                <LinearLayout
+                <!-- TOPICS CARD -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_card"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
 
-                    <TextView
-                        android:text="WEEKLY STREAK"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="#6B7280"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/txtStreak"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0 days"
-                        android:textSize="24sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📚 Topics"
+                            android:textSize="14sp"
+                            android:textColor="#6B7280"/>
 
-                <!-- Retention -->
-                <LinearLayout
+                        <TextView
+                            android:id="@+id/txtTopicsCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- STREAK CARD -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="110dp"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/bg_card_purple"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
 
-                    <TextView
-                        android:text="RETENTION"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/txtRetention"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0%"
-                        android:textSize="26sp"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🔥 Streak"
+                            android:textSize="14sp"
+                            android:textColor="#6B7280"/>
+
+                        <TextView
+                            android:id="@+id/txtStreak"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
-            <!-- Confidence Graph Title -->
+            <!-- ROW 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <!-- RETENTION CARD -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#3B28CC">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📊 Retention"
+                            android:textSize="14sp"
+                            android:textColor="#FFFFFF"/>
+
+                        <TextView
+                            android:id="@+id/txtRetention"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:textSize="28sp"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- REVIEWS CARD -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⚠ Reviews Due"
+                            android:textSize="14sp"
+                            android:textColor="#6B7280"/>
+
+                        <TextView
+                            android:id="@+id/txtReviewsDue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- GRAPH TITLE -->
             <TextView
-                android:text="Confidence Trend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Confidence Trend"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"/>
 
-            <!-- Graph -->
+            <!-- GRAPH -->
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="8dp"/>
 
-            <!-- Weak Subjects -->
+            <!-- WEAK SUBJECTS -->
             <TextView
-                android:text="Weak Subjects"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
+                android:text="Weak Subjects"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 android:layout_marginTop="24dp"/>
 
             <TextView
@@ -127,15 +223,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="None"
-                android:layout_marginTop="6dp"/>
+                android:textSize="16sp"
+                android:layout_marginTop="4dp"/>
 
-            <!-- Strong Subjects -->
+            <!-- STRONG SUBJECTS -->
             <TextView
-                android:text="Strong Subjects"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
+                android:text="Strong Subjects"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 android:layout_marginTop="16dp"/>
 
             <TextView
@@ -143,9 +240,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="None"
-                android:layout_marginTop="6dp"/>
+                android:textSize="16sp"
+                android:layout_marginTop="4dp"/>
 
         </LinearLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
