@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.nav_stats) {
                 selectedFragment = new StatsFragment();
             }
+            if(item.getItemId()==R.id.nav_profile) {
+                selectedFragment = new ProfileFragment();
+            }
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragmentContainer, selectedFragment)
