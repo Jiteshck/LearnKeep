@@ -1,160 +1,455 @@
 # 📚 LearnKeep – Smart Knowledge Tracking Android App
 
-LearnKeep is a modern Android application built using **Java** and **Room Database** that helps users capture, organize, and manage their daily learning efficiently.
+LearnKeep is a modern Android application built using **Java**, **Room Database**, and a **Node.js + MongoDB cloud backend** that helps users capture, organize, and review their learning efficiently.
 
-The app works completely offline and allows users to store topics, attach files, track confidence levels, and manage learning resources in a clean and structured way.
+The app allows users to store topics, attach files, track confidence levels, schedule review reminders, and manage learning resources in a clean and structured way.
 
----
+The project contains **two parts**:
 
-## 🚀 Features
-
-### 📌 Topic Management
-- Add, edit, and delete topics
-- Real-time search functionality
-- Clean and minimal UI
-
-### 📎 Attachments Support
-- 📷 Capture images using Camera
-- 🖼 Select images from Gallery
-- 📄 Attach PDF and other files
-- Auto-delete files when removed
-- Fullscreen image preview
-- Physical file cleanup when topic is deleted
-
-### 🎯 Confidence Tracking
-- Select confidence level from 1–10
-- Color-coded circular selector (Red → Green)
-- Stored per topic
-
-### 🏷 Tag System
-- Single tag per topic
-- Tag-based automatic icon selection
-- Editable tag support
-
-### 📺 Multiple YouTube Links
-- Add multiple YouTube links per topic
-- Open all saved videos easily
-- Clickable links inside topic details
-
-### 🔎 Smart Search
-- Real-time filtering
-- Search by title or tag
-
-### 🌞 UI Behavior
-- App always runs in Light Mode
-- Rounded search bar
-- Modern Material UI design
-
-### 💾 Offline Storage
-- Room Database (SQLite)
-- Internal File Storage
-- No internet required
+• Android Application
+• Node.js Backend API (MongoDB + JWT Authentication)
 
 ---
 
-## 🛠 Tech Stack
+# 🚀 Features
 
-- **Language:** Java
-- **Database:** Room (SQLite)
-- **UI:** XML + Material Components
-- **Storage:** Internal File System
-- **Architecture:** Activity-based structure
+## 📌 Topic Management
+
+* Add, edit, and delete topics
+* Real-time search functionality
+* Clean and minimal UI
+* Topic icons auto-selected using tags
 
 ---
 
-## 📂 Project Structure
+## 📎 Attachments Support
+
+* 📷 Capture images using Camera
+* 🖼 Select images from Gallery
+* 📄 Attach PDF and other files
+* Auto-delete files when removed
+* Fullscreen image preview
+* Physical file cleanup when topic is deleted
+
+---
+
+## 🎯 Confidence Tracking
+
+* Select confidence level from **1–10**
+* Color-coded circular selector *(Red → Green)*
+* Stored per topic
+* Used to schedule **review reminders**
+
+---
+
+## ⏰ Smart Study Reminder
+
+Topics are automatically scheduled for revision based on confidence level.
+
+| Confidence | Review Time |
+| ---------- | ----------- |
+| 1–3        | 1 day       |
+| 4–6        | 3 days      |
+| 7–8        | 7 days      |
+| 9–10       | 14 days     |
+
+Notifications remind users when a topic should be revised.
+
+---
+
+## 📊 Study Statistics
+
+Stats dashboard provides learning insights:
+
+* Study Streak
+* Retention Rate
+* Confidence Trend Graph
+* Strong Subjects
+* Weak Subjects
+* Review History
+
+---
+
+## 🏷 Tag System
+
+* Single tag per topic
+* Tag-based automatic icon selection
+* Editable tag support
+
+---
+
+## 📺 YouTube Learning Links
+
+* Add multiple YouTube links per topic
+* Clickable links inside topic details
+* Open videos directly from the app
+
+---
+
+## 🔎 Smart Search
+
+* Real-time filtering
+* Search by title or tag
+
+---
+
+## 🌐 Cloud Authentication
+
+Users can create accounts and login securely.
+
+Features:
+
+* User Signup
+* User Login
+* MongoDB Atlas cloud database
+* JWT secure authentication
+* Local session storage
+
+---
+
+## 💾 Hybrid Storage System
+
+| Storage           | Purpose              |
+| ----------------- | -------------------- |
+| Room Database     | Store topics locally |
+| Internal Storage  | Store attachments    |
+| MongoDB Atlas     | User authentication  |
+| SharedPreferences | Login session        |
+
+---
+
+# 🛠 Tech Stack
+
+### 📱 Android
+
+* Java
+* XML UI
+* Material Design Components
+* Room Database
+* RecyclerView
+* Retrofit API
+* Notification Manager
+
+### 🌐 Backend
+
+* Node.js
+* Express.js
+* MongoDB Atlas
+* JWT Authentication
+* dotenv environment variables
+
+---
+
+# 📂 Project Structure
 
 ```
-com.example.learnkeep
+LearnKeep
 │
-├── MainActivity.java
-├── AddKnowledgeActivity.java
-├── TopicDetailsActivity.java
-├── TopicAdapter.java
-├── AttachmentAdapter.java
-├── TopicIconHelper.java
-├── AppDatabase.java
-├── KnowledgeEntity.java
-└── KnowledgeDao.java
+├── app/                    # Android application
+│
+├── learnkeep-server/       # Node.js backend
+│   │
+│   ├── models
+│   │     └── User.js
+│   │
+│   ├── auth.js
+│   ├── server.js
+│   ├── package.json
+│   └── package-lock.json
+│
+├── .gitignore
+└── README.md
 ```
 
 ---
 
 # 📥 How To Clone & Run This Project
 
-## 🔹 1️⃣ Install Requirements
-
-Make sure you have:
-
-- Android Studio (Latest Version)
-- Git installed
-- Android SDK installed via Android Studio
+These steps allow **any beginner to run the project on another device.**
 
 ---
 
-## 🔹 2️⃣ Clone the Repository
+# 1️⃣ Install Required Software
 
-Open terminal / command prompt:
+Install the following tools first.
+
+### Android Development
+
+Download and install:
+
+**Android Studio**
+
+https://developer.android.com/studio
+
+Make sure the following are installed inside Android Studio:
+
+* Android SDK
+* Android Emulator (optional)
+
+---
+
+### Node.js Backend
+
+Install Node.js:
+
+https://nodejs.org
+
+Check installation:
+
+```bash
+node -v
+npm -v
+```
+
+---
+
+### Git
+
+Install Git:
+
+https://git-scm.com/downloads
+
+Verify installation:
+
+```bash
+git --version
+```
+
+---
+
+# 2️⃣ Clone the Repository
+
+Open terminal or command prompt.
 
 ```bash
 git clone https://github.com/Jiteshck/LearnKeep
 ```
 
----
+Move inside project folder:
 
-## 🔹 3️⃣ Open Project in Android Studio
-
-1. Open Android Studio
-2. Click **Open**
-3. Select the cloned `LearnKeep` folder
-4. Wait for Gradle Sync to complete
+```bash
+cd LearnKeep
+```
 
 ---
 
-## 🔹 4️⃣ Install Missing SDK (If Prompted)
+# 3️⃣ Setup Backend Server
 
-If Android Studio asks to install SDK components:
-- Click **Install**
-- Wait until setup completes
+Go to the server folder:
+
+```bash
+cd learnkeep-server
+```
+
+Install required packages:
+
+```bash
+npm install
+```
+
+This installs dependencies such as:
+
+* Express
+* Mongoose
+* JWT
+* dotenv
+* CORS
 
 ---
 
-## 🔹 5️⃣ Run the App
+# 4️⃣ Create Environment File (.env)
 
-- Connect a physical Android device  
-  OR  
-- Create and start an Emulator  
+Inside **learnkeep-server** create a file named:
 
-Then click:
+```
+.env
+```
 
-▶️ **Run App**
+Example:
+
+```
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=learnkeep_secret_key
+PORT=3000
+```
+
+⚠ IMPORTANT
+This file is not included in GitHub for security reasons.
+
+---
+
+# 5️⃣ Setup MongoDB Database
+
+1. Create account on:
+
+https://cloud.mongodb.com
+
+2. Create a **MongoDB Atlas Cluster**
+
+3. Click:
+
+```
+Connect → Drivers
+```
+
+4. Copy the connection string and paste into `.env`
+
+Example:
+
+```
+mongodb+srv://username:password@cluster0.mongodb.net/learnkeep
+```
+
+---
+
+# 6️⃣ Allow Network Access
+
+In MongoDB Atlas:
+
+```
+Network Access → Add IP Address
+```
+
+Add:
+
+```
+0.0.0.0/0
+```
+
+This allows connections from any device.
+
+---
+
+# 7️⃣ Start Backend Server
+
+Inside **learnkeep-server** run:
+
+```bash
+node server.js
+```
+
+You should see:
+
+```
+MongoDB Connected
+Server running on port 3000
+```
+
+---
+
+# 8️⃣ Configure Android API URL
+
+Inside Android project update the API URL.
+
+File:
+
+```
+ApiClient.java
+```
+
+Change base URL to your local IP.
+
+Example:
+
+```
+http://192.168.1.5:3000/
+```
+
+Find your IP using:
+
+```
+ipconfig
+```
+
+Both **phone and computer must be on the same WiFi network**.
+
+---
+
+# 9️⃣ Run Android Application
+
+Open Android Studio.
+
+Click:
+
+```
+Open → LearnKeep
+```
+
+Wait for **Gradle Sync** to complete.
+
+Connect:
+
+• Android Phone
+OR
+• Android Emulator
+
+Press:
+
+▶ Run App
+
+---
+
+# 🔐 Security Notes
+
+Sensitive data is protected using:
+
+```
+.gitignore
+```
+
+The following files are NOT uploaded to GitHub:
+
+```
+.env
+node_modules
+build files
+keystore files
+```
+
+Environment variables store:
+
+* MongoDB credentials
+* JWT secret
+* server port
 
 ---
 
 # 🧪 Database Information
 
-This app uses **Room Database** for local storage.
+### Local Storage
 
-If you modify the database schema:
-- Increase the database version number
-- OR clear app data
+Room Database stores:
+
+* Topics
+* Notes
+* Tags
+* Confidence levels
+
+### Cloud Storage
+
+MongoDB stores:
+
+* User accounts
+* Login credentials
 
 ---
 
 # 🔮 Future Improvements
 
-- Cloud backup (MongoDB)
-- User authentication
-- Analytics dashboard
-- Login Page
-- Test base on confidence level
+* Cloud sync for topics
+* Multi-device topic access
+* AI topic summarization
+* Study quiz generation
+* Profile avatars
+* Leaderboard for study streaks
 
 ---
 
 # 👨‍💻 Author
 
-**Jitesh Choudhary**  
-Android Developer | Java | Room | UI/UX Enthusiast  
+**Jitesh Choudhary**
 
----
+Android Developer | Java | Room | Backend APIs | UI/UX
 
+GitHub:
+https://github.com/Jiteshck
