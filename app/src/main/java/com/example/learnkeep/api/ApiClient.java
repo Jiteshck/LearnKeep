@@ -23,7 +23,7 @@ public class ApiClient {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.1.3:3000/")
+                    .baseUrl("https://learnkeep.onrender.com/")
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
