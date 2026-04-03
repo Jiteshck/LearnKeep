@@ -31,6 +31,10 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(this, SignupActivity.class));
         });
 
+        findViewById(R.id.txtForgotPassword).setOnClickListener(v -> {
+            startActivity(new Intent(this, ForgotPasswordActivity.class));
+        });
+
         btnLogin.setOnClickListener(v -> loginUser());
     }
 

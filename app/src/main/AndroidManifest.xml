@@ -33,6 +33,7 @@
         <!--Login Screen-->
         <activity android:name=".LoginActivity"/>
         <activity android:name=".SignupActivity"/>
+        <activity android:name=".ForgotPasswordActivity"/>
 
         <!-- Splash Screen (Launcher) -->
         <activity
