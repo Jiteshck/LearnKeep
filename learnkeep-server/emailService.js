@@ -8,6 +8,13 @@ async function sendEmail(to, subject, text) {
         from: process.env.EMAIL_USER,
         subject,
         text,
+        html: `
+            <h2>📚 LearnKeep</h2>
+            <p>${text}</p>
+            <p style="color:gray;font-size:12px">
+            If this was not you, ignore this email.
+            </p>
+        `
     };
 
     try {
