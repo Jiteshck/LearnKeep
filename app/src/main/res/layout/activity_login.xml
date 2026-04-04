@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_login_screen"
     android:fillViewport="true"
+    android:fitsSystemWindows="true"
     android:scrollbars="none">
 
     <LinearLayout

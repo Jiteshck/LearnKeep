@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="@drawable/bg_auth_screen">
 
     <!-- ── TOP BAR ── -->
@@ -21,9 +22,9 @@
             android:layout_height="44dp"
             android:background="@drawable/bg_back_btn"
             android:src="@drawable/ic_back_arrow"
-            android:tint="#1E1924"
             android:padding="10dp"
-            android:contentDescription="Go back"/>
+            android:contentDescription="Go back"
+            app:tint="#1E1924" />
 
         <TextView
             android:layout_width="0dp"
@@ -70,7 +71,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_login_mail"
-                        android:tint="#7F13EC"/>
+                        app:tint="#7F13EC" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

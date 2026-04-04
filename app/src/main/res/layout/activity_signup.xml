@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_auth_screen"
     android:fillViewport="true"
+    android:fitsSystemWindows="true"
     android:scrollbars="none">
 
     <LinearLayout
@@ -91,7 +92,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_login_person"
-                        android:tint="#7D7387"/>
+                        app:tint="#7D7387" />
                     <EditText
                         android:id="@+id/etName"
                         android:layout_width="0dp"
@@ -133,7 +134,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_login_mail"
-                        android:tint="#7D7387"/>
+                        app:tint="#7D7387" />
                     <EditText
                         android:id="@+id/etEmail"
                         android:layout_width="0dp"
@@ -175,7 +176,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_login_lock"
-                        android:tint="#7D7387"/>
+                        app:tint="#7D7387" />
                     <EditText
                         android:id="@+id/etPassword"
                         android:layout_width="0dp"
@@ -196,9 +197,9 @@
                         android:layout_height="40dp"
                         android:background="@android:color/transparent"
                         android:src="@drawable/ic_login_visibility"
-                        android:tint="#7D7387"
                         android:padding="8dp"
-                        android:contentDescription="Toggle password"/>
+                        android:contentDescription="Toggle password"
+                        app:tint="#7D7387" />
                 </LinearLayout>
 
                 <!-- Confirm Password Label -->
@@ -226,7 +227,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_login_lock"
-                        android:tint="#7D7387"/>
+                        app:tint="#7D7387" />
                     <EditText
                         android:id="@+id/etConfirmPassword"
                         android:layout_width="0dp"
@@ -247,9 +248,9 @@
                         android:layout_height="40dp"
                         android:background="@android:color/transparent"
                         android:src="@drawable/ic_login_visibility"
-                        android:tint="#7D7387"
                         android:padding="8dp"
-                        android:contentDescription="Toggle confirm password"/>
+                        android:contentDescription="Toggle confirm password"
+                        app:tint="#7D7387" />
                 </LinearLayout>
 
                 <!-- Terms Checkbox -->
