@@ -18,32 +18,20 @@
 
         <!-- ── LOGO CARD ── -->
         <androidx.cardview.widget.CardView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="44dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="12dp"
-            app:cardBackgroundColor="#1A1A2E">
-            <LinearLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginTop="52dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="16dp">
+
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Learn"
-                    android:textColor="#FFFFFF"
-                    android:textSize="11sp"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Keep"
-                    android:textColor="#A78BFA"
-                    android:textSize="11sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
+                android:contentDescription="AppLogo"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/learnkeep_logo" />
+
         </androidx.cardview.widget.CardView>
 
         <!-- ── HEADING ── -->
