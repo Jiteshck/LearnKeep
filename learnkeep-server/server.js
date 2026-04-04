@@ -99,7 +99,7 @@ app.post("/login", async (req,res)=>{
     );
 
     // 🚨 Login Alert Email
-    await sendEmail(email, "Welcome to LearnKeep 🎉", welcomeTemplate(user.name));
+    await sendEmail(email, "⚠️ Login Alert", loginAlertTemplate());
 
     res.json({
         success:true,
