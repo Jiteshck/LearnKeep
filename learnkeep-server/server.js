@@ -14,6 +14,14 @@ const app = express();
 const bcrypt = require("bcrypt");
 const JWT_SECRET = process.env.JWT_SECRET;
 
+const {
+    otpTemplate,
+    resetOtpTemplate,
+    welcomeTemplate,
+    loginAlertTemplate,
+    passwordChangedTemplate
+} = require("./emailTemplates");
+
 app.use(cors());
 app.use(express.json());
 
@@ -31,9 +39,12 @@ console.log(err);
 
 app.post("/signup", async (req,res)=>{
     const {name,email,password,otp} = req.body;
-    if(otpStore[email] !== otp){
-        return res.json({success:false, message:"Invalid OTP"});
+    if (!otpStore[email] ||
+        otpStore[email].otp !== otp ||
+        otpStore[email].expires < Date.now()) {
+        return res.json({success:false, message:"Invalid or expired OTP"});
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
         name,
@@ -44,8 +55,7 @@ app.post("/signup", async (req,res)=>{
     delete otpStore[email];
 
     // 🎉 Welcome Email
-    await sendEmail(email, "Welcome to LearnKeep 🎉",
-        "Your account has been successfully created!");
+    await sendEmail(email, "Welcome to LearnKeep 🎉", welcomeTemplate(name));
     res.json({success:true});
 });
 
@@ -60,9 +70,12 @@ app.post("/send-signup-otp", async (req,res)=>{
         specialChars: false
     });
 
-    otpStore[email] = otp;
+    otpStore[email] = {
+        otp,
+        expires: Date.now() + 5 * 60 * 1000 // 5 minutes
+    };
 
-    await sendEmail(email, "LearnKeep OTP", `Your OTP is ${otp}`);
+    await sendEmail(email, "Verify Your Account", otpTemplate(otp));
 
     res.json({success:true});
 });
@@ -71,21 +84,13 @@ app.post("/send-signup-otp", async (req,res)=>{
 
 app.post("/login", async (req,res)=>{
 
-    const {email,password,otp} = req.body;
+    const {email,password} = req.body;
 
     const user = await User.findOne({email});
-
-    if(!user) return res.json({success:false});
+    if(!user) return res.json({success:false, message:"User not found"});
 
     const isMatch = await bcrypt.compare(password, user.password);
-
     if(!isMatch) return res.json({success:false});
-
-    if(otpStore[email] !== otp){
-        return res.json({success:false, message:"Invalid OTP"});
-    }
-
-    delete otpStore[email];
 
     const token = jwt.sign(
         {id:user._id},
@@ -94,8 +99,7 @@ app.post("/login", async (req,res)=>{
     );
 
     // 🚨 Login Alert Email
-    await sendEmail(email, "Login Alert ⚠️",
-        "Your LearnKeep account was just accessed.");
+    await sendEmail(email, "Welcome to LearnKeep 🎉", welcomeTemplate(user.name));
 
     res.json({
         success:true,
@@ -116,9 +120,12 @@ app.post("/send-login-otp", async (req,res)=>{
         specialChars: false
     });
 
-    otpStore[email] = otp;
+    otpStore[email] = {
+        otp,
+        expires: Date.now() + 5 * 60 * 1000 // 5 minutes
+    };
 
-    await sendEmail(email, "Login OTP", `Your OTP is ${otp}`);
+    await sendEmail(email, "Login Verification Code", otpTemplate(otp));
 
     res.json({success:true});
 });
@@ -159,9 +166,12 @@ app.post("/forgot-password-otp", async (req,res)=>{
         specialChars: false
     });
 
-    otpStore[email] = otp;
+    otpStore[email] = {
+        otp,
+        expires: Date.now() + 5 * 60 * 1000 // 5 minutes
+    };
 
-    await sendEmail(email, "Reset Password OTP", `OTP: ${otp}`);
+    await sendEmail(email, "Reset Password Code", resetOtpTemplate(otp));
 
     res.json({success:true});
 });
@@ -170,8 +180,10 @@ app.post("/reset-password", async (req,res)=>{
 
     const {email,otp,newPassword} = req.body;
 
-    if(otpStore[email] !== otp){
-        return res.json({success:false});
+    if (!otpStore[email] ||
+        otpStore[email].otp !== otp ||
+        otpStore[email].expires < Date.now()) {
+        return res.json({success:false, message:"Invalid or expired OTP"});
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -182,7 +194,7 @@ app.post("/reset-password", async (req,res)=>{
     );
 
     delete otpStore[email];
-
+    await sendEmail(email, "Password Changed", passwordChangedTemplate());
     res.json({success:true});
 });
 

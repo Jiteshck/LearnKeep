@@ -1,6 +1,5 @@
 const axios = require("axios");
-
-async function sendEmail(to, subject, text) {
+async function sendEmail(to, subject, htmlContent) {
     try {
         await axios.post(
             "https://api.brevo.com/v3/smtp/email",
@@ -11,13 +10,7 @@ async function sendEmail(to, subject, text) {
                 },
                 to: [{ email: to }],
                 subject: subject,
-                htmlContent: `
-                    <h2>📚 LearnKeep</h2>
-                    <p>${text}</p>
-                    <p style="color:gray;font-size:12px">
-                    If this was not you, ignore this email.
-                    </p>
-                `
+                htmlContent: htmlContent
             },
             {
                 headers: {
@@ -26,12 +19,9 @@ async function sendEmail(to, subject, text) {
                 }
             }
         );
-
-        console.log("✅ Email sent to:", to);
-
+        console.log("✅ Email sent:", subject);
     } catch (error) {
-        console.error("❌ Brevo Email Error:", error.response?.data || error.message);
+        console.error("❌ Email error:", error.response?.data || error.message);
     }
 }
-
 module.exports = sendEmail;
