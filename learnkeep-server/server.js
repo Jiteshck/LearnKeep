@@ -54,10 +54,10 @@ app.post("/send-signup-otp", async (req,res)=>{
     const {email} = req.body;
 
     const otp = otpGenerator.generate(6, {
-        digits:true,
-        alphabets:false,
-        upperCase:false,
-        specialChars:false
+        digits: true,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false
     });
 
     otpStore[email] = otp;
@@ -110,8 +110,10 @@ app.post("/send-login-otp", async (req,res)=>{
     const {email} = req.body;
 
     const otp = otpGenerator.generate(6, {
-        digits:true,
-        alphabets:false
+        digits: true,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false
     });
 
     otpStore[email] = otp;
@@ -151,7 +153,10 @@ app.post("/forgot-password-otp", async (req,res)=>{
     const {email} = req.body;
 
     const otp = otpGenerator.generate(6, {
-        digits:true
+        digits: true,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false
     });
 
     otpStore[email] = otp;
