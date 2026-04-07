@@ -91,8 +91,8 @@ public class ProfileFragment extends Fragment {
         txtName.setText(session.getName());
         txtEmail.setText(session.getEmail());
 
-        loadProfilePicture();
-        loadStats();
+//        loadProfilePicture();
+//        loadStats();
 
         btnChangePhoto.setOnClickListener(v -> openImagePicker());
 
