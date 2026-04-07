@@ -79,7 +79,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private void validateAndSendOtp() {
         String name     = etName.getText().toString().trim();
-        String email    = etEmail.getText().toString().trim();
+        String email    = etEmail.getText().toString().trim().toLowerCase();
         String password = etPassword.getText().toString().trim();
         String confirm  = etConfirmPassword.getText().toString().trim();
 

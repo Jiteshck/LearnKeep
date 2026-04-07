@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String email    = etEmail.getText().toString().trim();
+        String email    = etEmail.getText().toString().trim().toLowerCase();
         String password = etPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
