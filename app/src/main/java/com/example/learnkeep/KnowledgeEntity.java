@@ -19,4 +19,5 @@ public class KnowledgeEntity {
     public String attachmentPaths;
 
     public long createdAt;
+    public int reviewCount;
 }

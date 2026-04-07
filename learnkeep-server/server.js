@@ -83,9 +83,7 @@ app.post("/send-signup-otp", async (req,res)=>{
 /* ---------------- Login API ---------------- */
 
 app.post("/login", async (req,res)=>{
-
     const {email,password} = req.body;
-
     const user = await User.findOne({email});
     if(!user) return res.json({success:false, message:"User not found"});
 
@@ -110,7 +108,6 @@ app.post("/login", async (req,res)=>{
 });
 
 app.post("/send-login-otp", async (req,res)=>{
-
     const {email} = req.body;
 
     const otp = otpGenerator.generate(6, {
@@ -126,39 +123,30 @@ app.post("/send-login-otp", async (req,res)=>{
     };
 
     await sendEmail(email, "Login Verification Code", otpTemplate(otp));
-
     res.json({success:true});
 });
 
 /* ---------------- Protected Route Example ---------------- */
 
 app.get("/profile", authMiddleware, async (req,res)=>{
-
-
 try{
-
     const user = await User.findById(req.user.id);
-
     res.json({
-        name:user.name,
-        email:user.email
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic || ""
     });
 
 }catch(err){
-
     res.status(500).json({
         success:false
     });
-
 }
-
 
 });
 
 app.post("/forgot-password-otp", async (req,res)=>{
-
     const {email} = req.body;
-
     const otp = otpGenerator.generate(6, {
         digits: true,
         lowerCaseAlphabets: false,
@@ -172,22 +160,17 @@ app.post("/forgot-password-otp", async (req,res)=>{
     };
 
     await sendEmail(email, "Reset Password Code", resetOtpTemplate(otp));
-
     res.json({success:true});
 });
 
 app.post("/reset-password", async (req,res)=>{
-
     const {email,otp,newPassword} = req.body;
-
     if (!otpStore[email] ||
         otpStore[email].otp !== otp ||
         otpStore[email].expires < Date.now()) {
         return res.json({success:false, message:"Invalid or expired OTP"});
     }
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     await User.updateOne(
         {email},
         {password: hashedPassword}
@@ -198,8 +181,23 @@ app.post("/reset-password", async (req,res)=>{
     res.json({success:true});
 });
 
+app.put("/update-profile-pic", authMiddleware, async (req, res) => {
+    const { profilePic } = req.body;
+    if (!profilePic) {
+        return res.json({ success: false, message: "No image data provided" });
+    }
+    try {
+        await User.updateOne(
+            { _id: req.user.id },
+            { profilePic: profilePic }   // base64 string stored in DB
+        );
+        res.json({ success: true, message: "Profile picture updated" });
+    } catch (err) {
+        console.error("Profile pic update error:", err);
+        res.status(500).json({ success: false });
+    }
+});
 /* ---------------- Server Start ---------------- */
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, ()=>{
 console.log("Server running on port 3000");
