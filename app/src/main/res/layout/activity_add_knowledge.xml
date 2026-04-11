@@ -7,7 +7,6 @@
     android:fitsSystemWindows="true"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -23,8 +22,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:fitsSystemWindows="true"/>
 
-
-    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -39,7 +36,6 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Center Icon -->
             <ImageView
                 android:id="@+id/imgTopicIcon"
                 android:layout_width="72dp"
@@ -47,7 +43,7 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_default"
                 android:padding="1dp"
-                android:contentDescription="Knowledge Icon" />
+                android:contentDescription="Knowledge Icon"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -58,7 +54,6 @@
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
-            <!-- Topic Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +69,6 @@
                 android:background="@drawable/bg_input"
                 android:inputType="text"/>
 
-            <!-- YouTube -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,12 +80,11 @@
                 android:id="@+id/etYoutube"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Paste YouTube links separated by comma"
+                android:hint="Paste YouTube link"
                 android:inputType="textMultiLine"
                 android:minLines="2"
                 android:background="@drawable/bg_input"/>
 
-            <!-- Notes -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -112,7 +105,6 @@
                 android:overScrollMode="always"
                 android:scrollbarStyle="insideInset"/>
 
-            <!-- Confidence -->
             <TextView
                 android:text="Confidence Level"
                 android:textStyle="bold"
@@ -143,7 +135,6 @@
                 android:textColor="#6B7280"
                 android:layout_marginTop="6dp"/>
 
-            <!-- Tags -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -177,8 +168,6 @@
                 android:layout_height="wrap_content"
                 app:chipSpacing="8dp"/>
 
-
-            <!-- Attachments -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -220,7 +209,6 @@
                     app:cornerRadius="16dp"/>
             </LinearLayout>
 
-            <!-- Attachment status -->
             <TextView
                 android:id="@+id/txtAttachmentStatus"
                 android:layout_width="wrap_content"
@@ -229,7 +217,6 @@
                 android:textColor="#6B7280"
                 android:layout_marginTop="8dp"/>
 
-            <!-- Attachment preview list -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerAttachments"
                 android:layout_width="match_parent"
@@ -241,17 +228,45 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Save Button -->
     <Button
         android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:text="Save Knowledge"
+        android:text="Save &amp; Start AI Quiz →"
         android:textColor="@android:color/white"
         android:backgroundTint="#7C3AED"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp"/>
+
+    <!-- Saving overlay (shown while inserting + transitioning) -->
+    <LinearLayout
+        android:id="@+id/layoutSavingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#CC000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ProgressBar
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminateTint="#FFFFFF"/>
+
+        <TextView
+            android:id="@+id/txtSavingStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Saving…"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

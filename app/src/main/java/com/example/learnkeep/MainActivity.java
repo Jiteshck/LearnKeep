@@ -1,7 +1,6 @@
 package com.example.learnkeep;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,37 +13,41 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.content.Intent;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fab = findViewById(R.id.fabAdd);
-        fab.setOnClickListener(v ->
-                startActivity(new Intent(this, AddKnowledgeActivity.class))
-        );
+        //Add topic FAB
+        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
+        fabAdd.setOnClickListener(v ->
+                startActivity(new Intent(this, AddKnowledgeActivity.class)));
 
+        //AI Chat FAB (floating Gemini button)
+        FloatingActionButton fabAi = findViewById(R.id.fabAiChat);
+        fabAi.setOnClickListener(v ->
+                new AiChatBottomSheet().show(getSupportFragmentManager(), "ai_chat"));
+
+        //Bottom navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
         bottomNav.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-            if (item.getItemId() == R.id.nav_topics) {
-                selectedFragment = new TopicsFragment();
+            Fragment selected = null;
+            if      (item.getItemId() == R.id.nav_topics)   selected = new TopicsFragment();
+            else if (item.getItemId() == R.id.nav_practice) selected = new PracticeFragment();
+            else if (item.getItemId() == R.id.nav_stats)    selected = new StatsFragment();
+            else if (item.getItemId() == R.id.nav_profile)  selected = new ProfileFragment();
+
+            if (selected != null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, selected)
+                        .commit();
             }
-            if (item.getItemId() == R.id.nav_stats) {
-                selectedFragment = new StatsFragment();
-            }
-            if(item.getItemId()==R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
-            }
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragmentContainer, selectedFragment)
-                    .commit();
             return true;
         });
 
@@ -56,15 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Notification permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        101
-                );
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
     }

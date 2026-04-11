@@ -9,11 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ImageView;
-
+import android.widget.*;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,166 +19,127 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class TopicDetailsActivity extends AppCompatActivity {
 
     private static final int CAMERA_PERMISSION_CODE = 201;
+
     private KnowledgeEntity entity;
-    private TextView txtConfidenceValue;
-    // UI
-    private TextView txtAttachmentStatus;
-    private EditText etTitle, etNotes;
-    private ChipGroup chipGroupTags;
+
+    // Views
+    private TextView     txtConfidenceValue, txtAttachmentStatus, txtYoutubeLink, txtLastScore;
+    private EditText     etTitle, etNotes;
+    private ChipGroup    chipGroupTags;
     private RecyclerView recyclerAttachments;
-    // Confidence (circle selector)
     private LinearLayout confidenceContainer;
-    private int selectedConfidence = 5;
-    // Attachments
+    private int          selectedConfidence = 5;
     private final List<String> attachmentPaths = new ArrayList<>();
-    private AttachmentAdapter attachmentAdapter;
-    // Camera
-    private File cameraPhotoFile;
-    //logo switch
-    private ImageView imgTopicIcon;
+    private AttachmentAdapter  attachmentAdapter;
+    private File         cameraPhotoFile;
+    private ImageView    imgTopicIcon;
     private LinearLayout tagInputLayout;
-    private boolean hasTag = false;
-    private TextView txtYoutubeLink;
-
-
+    private boolean      hasTag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_details);
 
-        // Toolbar (NO back arrow)
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Views
+        // ── Bind all views ─────────────────────────────────────────────
         etTitle = findViewById(R.id.etTitle);
         etNotes = findViewById(R.id.etNotes);
-        etNotes.setMovementMethod(new android.text.method.ScrollingMovementMethod());
         txtYoutubeLink = findViewById(R.id.txtYoutubeLink);
         txtAttachmentStatus = findViewById(R.id.txtAttachmentStatus);
         chipGroupTags = findViewById(R.id.chipGroupTags);
-        tagInputLayout = findViewById(R.id.tagInputLayout);
+        tagInputLayout  = findViewById(R.id.tagInputLayout);
         recyclerAttachments = findViewById(R.id.recyclerAttachments);
         confidenceContainer = findViewById(R.id.confidenceContainer);
-        txtConfidenceValue = findViewById(R.id.txtConfidenceValue);
-        imgTopicIcon = findViewById(R.id.imgTopicIcon);
+        txtConfidenceValue  = findViewById(R.id.txtConfidenceValue);
+        imgTopicIcon  = findViewById(R.id.imgTopicIcon);
+        txtLastScore  = findViewById(R.id.txtLastScore);
 
+        etNotes.setMovementMethod(new android.text.method.ScrollingMovementMethod());
         etNotes.setOnTouchListener((v, event) -> {
             v.getParent().requestDisallowInterceptTouchEvent(true);
             return false;
         });
 
-        // RecyclerView
+        // ── RecyclerView ───────────────────────────────────────────────
         recyclerAttachments.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        );
-
-        attachmentAdapter = new AttachmentAdapter(
-                this,
-                attachmentPaths,
-                updated -> {
-                    txtAttachmentStatus.setText(updated.size() + " attachment(s)");
-                    entity.attachmentPaths = String.join(",", updated);
-                }
-        );
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        attachmentAdapter = new AttachmentAdapter(this, attachmentPaths, updated -> {
+            txtAttachmentStatus.setText(updated.size() + " attachment(s)");
+            entity.attachmentPaths = String.join(",", updated);
+        });
         recyclerAttachments.setAdapter(attachmentAdapter);
 
-        // Load topic
+        // ── Load topic ─────────────────────────────────────────────────
         int topicId = getIntent().getIntExtra("topic_id", -1);
-        if (topicId == -1) {
-            finish();
-            return;
-        }
+        if (topicId == -1) { finish(); return; }
 
-        entity = AppDatabase.getInstance(this)
-                .knowledgeDao()
-                .getById(topicId);
-        if (entity == null) {
-            finish();
-            return;
-        }
-        int iconRes = TopicIconHelper.getIconFromTags(entity.tags);
-        imgTopicIcon.setImageResource(iconRes);
+        entity = AppDatabase.getInstance(this).knowledgeDao().getById(topicId);
+        if (entity == null) { finish(); return; }
 
-        // Populate data
+        // ── Populate ───────────────────────────────────────────────────
+        imgTopicIcon.setImageResource(TopicIconHelper.getIconFromTags(entity.tags));
         etTitle.setText(entity.title);
         etNotes.setText(entity.notes);
         txtYoutubeLink.setText(entity.youtubeLinks);
 
+        // Last quiz score — always visible, text changes based on data
+        if (entity.lastTestScore >= 0) {
+            txtLastScore.setText("Last quiz: " + entity.lastTestScore
+                    + "/" + entity.lastTestTotal + " correct");
+        } else {
+            txtLastScore.setText("No quiz taken yet — tap below to start AI quiz");
+        }
+
+        // YouTube click
         txtYoutubeLink.setOnClickListener(v -> {
             String url = entity.youtubeLinks;
-
             if (url != null && !url.isEmpty()) {
-                if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                    url = "https://" + url;
-                }
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
+                if (!url.startsWith("http")) url = "https://" + url;
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             }
         });
-
         txtYoutubeLink.setOnLongClickListener(v -> {
             String url = entity.youtubeLinks;
             if (url != null && !url.isEmpty()) {
-                android.content.ClipboardManager clipboard =
-                        (android.content.ClipboardManager)
-                                getSystemService(CLIPBOARD_SERVICE);
-
-                android.content.ClipData clip =
-                        android.content.ClipData.newPlainText("YouTube Link", url);
-
-                clipboard.setPrimaryClip(clip);
-                android.widget.Toast.makeText(
-                        this,
-                        "Link copied to clipboard",
-                        android.widget.Toast.LENGTH_SHORT
-                ).show();
+                android.content.ClipboardManager cb =
+                        (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                cb.setPrimaryClip(android.content.ClipData.newPlainText("YouTube Link", url));
+                Toast.makeText(this, "Link copied", Toast.LENGTH_SHORT).show();
             }
             return true;
         });
 
         // Confidence
-        try {
-            selectedConfidence = Integer.parseInt(entity.confidence);
-        } catch (Exception ignored) {
-            selectedConfidence = 5;
-        }
+        try { selectedConfidence = Integer.parseInt(entity.confidence); }
+        catch (Exception e) { selectedConfidence = 5; }
         setupConfidenceSelector(selectedConfidence);
 
         // Tags
         if (entity.tags != null) {
             for (String tag : entity.tags.split(",")) {
-                if (!tag.trim().isEmpty()) {
-                    addTagChip(tag.replace("#", ""));
-                }
+                if (!tag.trim().isEmpty()) addTagChip(tag.replace("#", "").trim());
             }
         }
-        EditText etTag = findViewById(R.id.etTag);
 
+        EditText etTag = findViewById(R.id.etTag);
         findViewById(R.id.btnAddTag).setOnClickListener(v -> {
             String tag = etTag.getText().toString().trim();
-            if (!tag.isEmpty()) {
-                addTagChip(tag);
-                etTag.setText("");
-            }
+            if (!tag.isEmpty()) { addTagChip(tag); etTag.setText(""); }
         });
 
         // Attachments
-        if (entity.attachmentPaths != null) {
+        if (entity.attachmentPaths != null && !entity.attachmentPaths.isEmpty()) {
             for (String path : entity.attachmentPaths.split(",")) {
                 File f = new File(path);
                 if (f.exists()) attachmentPaths.add(path);
@@ -190,252 +147,177 @@ public class TopicDetailsActivity extends AppCompatActivity {
         }
         updateAttachmentUI();
 
-        // Buttons
+        // ── Button listeners ───────────────────────────────────────────
         findViewById(R.id.btnCamera).setOnClickListener(v -> openCamera());
         findViewById(R.id.btnImage).setOnClickListener(v -> pickImage());
         findViewById(R.id.btnFile).setOnClickListener(v -> pickFile());
-
         findViewById(R.id.btnUpdate).setOnClickListener(v -> updateTopic());
         findViewById(R.id.btnDelete).setOnClickListener(v -> deleteTopic());
+
+        // ✅ btnTakeQuiz — now exists in layout
+        findViewById(R.id.btnTakeQuiz).setOnClickListener(v -> {
+            saveEntityFields(); // persist any edits first
+            Intent intent = new Intent(this, McqTestActivity.class);
+            intent.putExtra(McqTestActivity.EXTRA_TOPIC_ID, entity.id);
+            intent.putExtra(McqTestActivity.EXTRA_TRIGGER, "MANUAL");
+            startActivity(intent);
+        });
     }
 
-    /* ---------------- CONFIDENCE ---------------- */
+    // ── Persist current field values to entity & DB ─────────────────────
+    private void saveEntityFields() {
+        entity.title           = etTitle.getText().toString().trim();
+        entity.notes           = etNotes.getText().toString().trim();
+        entity.youtubeLinks    = txtYoutubeLink.getText().toString().trim();
+        entity.confidence      = String.valueOf(selectedConfidence);
+        entity.tags            = collectTags();
+        entity.attachmentPaths = String.join(",", attachmentPaths);
+        AppDatabase.getInstance(this).knowledgeDao().update(entity);
+    }
 
-    private void setupConfidenceSelector(int preselected) {
+    // ── Confidence selector ─────────────────────────────────────────────
+    private void setupConfidenceSelector(int pre) {
         confidenceContainer.removeAllViews();
-
         for (int i = 1; i <= 10; i++) {
             TextView tv = new TextView(this);
             tv.setText(String.valueOf(i));
             tv.setTextColor(Color.WHITE);
             tv.setGravity(android.view.Gravity.CENTER);
             tv.setTextSize(14f);
-
             int size = (int) (32 * getResources().getDisplayMetrics().density);
-            LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(size, size);
-            params.setMargins(6, 0, 6, 0);
-            tv.setLayoutParams(params);
-
-            tv.setBackground(createConfidenceDrawable(i, i == preselected));
-
-            int value = i;
-            tv.setOnClickListener(v -> {
-                selectedConfidence = value;
-                setupConfidenceSelector(value);
-            });
-
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(size, size);
+            p.setMargins(6, 0, 6, 0);
+            tv.setLayoutParams(p);
+            tv.setBackground(confDrawable(i, i == pre));
+            int val = i;
+            tv.setOnClickListener(v -> { selectedConfidence = val; setupConfidenceSelector(val); });
             confidenceContainer.addView(tv);
         }
-
-        txtConfidenceValue.setText("Selected: " + preselected);
+        txtConfidenceValue.setText("Selected: " + pre);
     }
 
-    private GradientDrawable createConfidenceDrawable(int value, boolean selected) {
+    private GradientDrawable confDrawable(int v, boolean sel) {
         GradientDrawable d = new GradientDrawable();
         d.setShape(GradientDrawable.OVAL);
-
-        if (value <= 3) d.setColor(Color.parseColor("#EF4444"));
-        else if (value <= 6) d.setColor(Color.parseColor("#F59E0B"));
-        else if (value <= 8) d.setColor(Color.parseColor("#84CC16"));
-        else d.setColor(Color.parseColor("#22C55E"));
-
-        d.setStroke(selected ? 4 : 2,
-                selected ? Color.BLACK : Color.parseColor("#E5E7EB"));
+        if      (v <= 3) d.setColor(Color.parseColor("#EF4444"));
+        else if (v <= 6) d.setColor(Color.parseColor("#F59E0B"));
+        else if (v <= 8) d.setColor(Color.parseColor("#84CC16"));
+        else             d.setColor(Color.parseColor("#22C55E"));
+        d.setStroke(sel ? 4 : 2, sel ? Color.BLACK : Color.parseColor("#E5E7EB"));
         return d;
     }
 
-    /* ---------------- TAGS ---------------- */
-
+    // ── Tags ────────────────────────────────────────────────────────────
     private void addTagChip(String text) {
         if (hasTag) return;
-
         Chip chip = new Chip(this);
         chip.setText("#" + text);
         chip.setCloseIconVisible(true);
-
         chip.setOnCloseIconClickListener(v -> {
             chipGroupTags.removeView(chip);
             hasTag = false;
-            tagInputLayout.setVisibility(View.VISIBLE);
+            if (tagInputLayout != null) tagInputLayout.setVisibility(View.VISIBLE);
         });
-
         chipGroupTags.addView(chip);
         hasTag = true;
-        if (tagInputLayout != null)
-            tagInputLayout.setVisibility(View.GONE);
+        if (tagInputLayout != null) tagInputLayout.setVisibility(View.GONE);
     }
 
     private String collectTags() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < chipGroupTags.getChildCount(); i++) {
+        for (int i = 0; i < chipGroupTags.getChildCount(); i++)
             sb.append(((Chip) chipGroupTags.getChildAt(i)).getText()).append(",");
-        }
         return sb.toString();
     }
 
-    /* ---------------- IMAGE PICKER ---------------- */
-
+    // ── Image picker ────────────────────────────────────────────────────
     private final ActivityResultLauncher<Intent> imagePicker =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            saveToInternal(result.getData().getData());
-                        }
-                    });
-
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    r -> { if (r.getResultCode() == RESULT_OK && r.getData() != null)
+                        saveToInternal(r.getData().getData()); });
     private void pickImage() {
-        imagePicker.launch(
-                new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        );
+        imagePicker.launch(new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
     }
 
-    /* ---------------- FILE PICKER ---------------- */
-
+    // ── File picker ─────────────────────────────────────────────────────
     private final ActivityResultLauncher<Intent> filePicker =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            saveToInternal(result.getData().getData());
-                        }
-                    });
-
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    r -> { if (r.getResultCode() == RESULT_OK && r.getData() != null)
+                        saveToInternal(r.getData().getData()); });
     private void pickFile() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        filePicker.launch(intent);
+        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.setType("*/*");
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        filePicker.launch(i);
     }
 
-    /* ---------------- CAMERA ---------------- */
-
+    // ── Camera ──────────────────────────────────────────────────────────
     private final ActivityResultLauncher<Intent> cameraLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK &&
-                                cameraPhotoFile != null &&
-                                cameraPhotoFile.exists()) {
-
-                            attachmentPaths.add(cameraPhotoFile.getAbsolutePath());
-                            updateAttachmentUI();
-                        }
-                    });
-
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    r -> { if (r.getResultCode() == RESULT_OK
+                            && cameraPhotoFile != null && cameraPhotoFile.exists()) {
+                        attachmentPaths.add(cameraPhotoFile.getAbsolutePath());
+                        updateAttachmentUI();
+                    }});
     private void openCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.CAMERA},
-                    CAMERA_PERMISSION_CODE
-            );
-        } else {
-            launchCamera();
-        }
+                != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+        else launchCamera();
     }
-
     private void launchCamera() {
         try {
             File dir = new File(getFilesDir(), "attachments");
             if (!dir.exists()) dir.mkdirs();
-
             cameraPhotoFile = new File(dir, System.currentTimeMillis() + ".jpg");
-
-            Uri uri = FileProvider.getUriForFile(
-                    this,
-                    getPackageName() + ".provider",
-                    cameraPhotoFile
-            );
-
+            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", cameraPhotoFile);
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             cameraLauncher.launch(intent);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
-    /* ---------------- STORAGE ---------------- */
-
+    // ── Internal file save ──────────────────────────────────────────────
     private void saveToInternal(Uri uri) {
         try {
             File dir = new File(getFilesDir(), "attachments");
             if (!dir.exists()) dir.mkdirs();
-
-            String ext = "dat";
             String type = getContentResolver().getType(uri);
-            if ("image/jpeg".equals(type)) ext = "jpg";
-            else if ("image/png".equals(type)) ext = "png";
+            String ext  = "dat";
+            if ("image/jpeg".equals(type))       ext = "jpg";
+            else if ("image/png".equals(type))   ext = "png";
             else if ("application/pdf".equals(type)) ext = "pdf";
-
             File file = new File(dir, System.currentTimeMillis() + "." + ext);
-
-            InputStream in = getContentResolver().openInputStream(uri);
+            InputStream  in  = getContentResolver().openInputStream(uri);
             FileOutputStream out = new FileOutputStream(file);
-
-            byte[] buf = new byte[4096];
-            int len;
+            byte[] buf = new byte[4096]; int len;
             while ((len = in.read(buf)) != -1) out.write(buf, 0, len);
-
-            in.close();
-            out.close();
-
+            in.close(); out.close();
             attachmentPaths.add(file.getAbsolutePath());
             updateAttachmentUI();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
-    /* ---------------- HELPERS ---------------- */
-
     private void updateAttachmentUI() {
-        txtAttachmentStatus.setText(
-                attachmentPaths.size() + " attachment(s)"
-        );
+        txtAttachmentStatus.setText(attachmentPaths.size() + " attachment(s)");
         attachmentAdapter.notifyDataSetChanged();
     }
 
+    // ── Update / Delete ─────────────────────────────────────────────────
     private void updateTopic() {
-        entity.title = etTitle.getText().toString().trim();
-        entity.notes = etNotes.getText().toString().trim();
-        entity.youtubeLinks = txtYoutubeLink.getText().toString().trim();
-        entity.confidence = String.valueOf(selectedConfidence);
-        entity.tags = collectTags();
-        entity.attachmentPaths = String.join(",", attachmentPaths);
-
-        AppDatabase.getInstance(this)
-                .knowledgeDao()
-                .update(entity);
-
-        ReminderScheduler.scheduleReminder(
-                this,
-                entity.id,
-                entity.title,
-                selectedConfidence
-        );
-
+        saveEntityFields();
+        ReminderScheduler.scheduleReminder(this, entity.id, entity.title, selectedConfidence);
+        Toast.makeText(this, "Topic updated ✓", Toast.LENGTH_SHORT).show();
         finish();
     }
 
     private void deleteTopic() {
-        for (String path : attachmentPaths) {
-            File f = new File(path);
-            if (f.exists()) f.delete();
-        }
+        for (String path : attachmentPaths) { File f = new File(path); if (f.exists()) f.delete(); }
         ReminderScheduler.cancelReminder(this, entity.id);
-        AppDatabase.getInstance(this)
-                .knowledgeDao()
-                .delete(entity);
-
+        AppDatabase.getInstance(this).knowledgeDao().delete(entity);
         finish();
     }
 }

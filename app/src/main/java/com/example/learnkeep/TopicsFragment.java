@@ -3,18 +3,11 @@ package com.example.learnkeep;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-
+import android.view.*;
+import android.widget.*;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
+import androidx.recyclerview.widget.*;
+import java.util.*;
 
 public class TopicsFragment extends Fragment {
 
@@ -25,32 +18,25 @@ public class TopicsFragment extends Fragment {
     public TopicsFragment() {}
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle s) {
         View view = inflater.inflate(R.layout.fragment_topics, container, false);
+
         recyclerTopics = view.findViewById(R.id.recyclerTopics);
         recyclerTopics.setLayoutManager(new LinearLayoutManager(getContext()));
-        EditText searchBox = view.findViewById(R.id.searchBox);
-        ImageView btnClear = view.findViewById(R.id.btnClearSearch);
 
+        EditText  searchBox = view.findViewById(R.id.searchBox);
+        ImageView btnClear  = view.findViewById(R.id.btnClearSearch);
 
-        // Search logic
         searchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0)
-                    btnClear.setVisibility(View.VISIBLE);
-                else
-                    btnClear.setVisibility(View.GONE);
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) {
+                btnClear.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
                 filterTopics(s.toString());
             }
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
         btnClear.setOnClickListener(v -> searchBox.setText(""));
+
         loadTopics();
         return view;
     }
@@ -64,15 +50,11 @@ public class TopicsFragment extends Fragment {
     private void loadTopics() {
         new Thread(() -> {
             List<KnowledgeEntity> list =
-                    AppDatabase.getInstance(requireContext())
-                            .knowledgeDao()
-                            .getAll();
+                    AppDatabase.getInstance(requireContext()).knowledgeDao().getAll();
             requireActivity().runOnUiThread(() -> {
                 fullList.clear();
-                if(list != null){
-                    fullList.addAll(list);
-                }
-                if(adapter == null){
+                if (list != null) fullList.addAll(list);
+                if (adapter == null) {
                     adapter = new TopicAdapter(fullList);
                     recyclerTopics.setAdapter(adapter);
                 } else {
@@ -84,14 +66,13 @@ public class TopicsFragment extends Fragment {
 
     private void filterTopics(String query) {
         if (adapter == null) return;
-        List<KnowledgeEntity> filteredList = new ArrayList<>();
-        for (KnowledgeEntity item : fullList) {
-            if (item.title.toLowerCase().contains(query.toLowerCase())
-                    || (item.tags != null && item.tags.toLowerCase().contains(query.toLowerCase()))) {
-                filteredList.add(item);
-            }
+        List<KnowledgeEntity> filtered = new ArrayList<>();
+        for (KnowledgeEntity e : fullList) {
+            if (e.title.toLowerCase().contains(query.toLowerCase())
+                    || (e.tags != null && e.tags.toLowerCase().contains(query.toLowerCase())))
+                filtered.add(e);
         }
-        adapter = new TopicAdapter(filteredList);
+        adapter = new TopicAdapter(filtered);
         recyclerTopics.setAdapter(adapter);
     }
 }

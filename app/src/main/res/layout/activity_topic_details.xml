@@ -7,7 +7,6 @@
     android:fitsSystemWindows="true"
     android:background="#F8FAFC">
 
-    <!-- Top App Bar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -22,7 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -37,7 +35,7 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Center Icon -->
+            <!-- Icon -->
             <ImageView
                 android:id="@+id/imgTopicIcon"
                 android:layout_width="72dp"
@@ -55,11 +53,42 @@
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
-            <!-- Topic Title -->
+            <!-- Completed banner -->
+            <LinearLayout
+                android:id="@+id/completedBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="#D1FAE5"
+                android:padding="10dp"
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✅ This topic is marked as complete — no reminders active"
+                    android:textColor="#065F46"
+                    android:textSize="13sp"/>
+            </LinearLayout>
+
+            <!-- Last score info -->
+            <TextView
+                android:id="@+id/txtDetailLastScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="#F5EAFA"
+                android:textColor="#4C4355"
+                android:textSize="13sp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"/>
+
+            <!-- Title -->
             <TextView
                 android:text="Topic Title"
                 android:textStyle="bold"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -104,9 +133,7 @@
                 android:inputType="textMultiLine"
                 android:gravity="top"
                 android:maxLines="6"
-                android:scrollbars="vertical"
-                android:overScrollMode="always"
-                android:scrollbarStyle="insideInset"/>
+                android:scrollbars="vertical"/>
 
             <!-- Confidence -->
             <TextView
@@ -123,7 +150,6 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:clipToPadding="false">
-
                 <LinearLayout
                     android:id="@+id/confidenceContainer"
                     android:layout_width="wrap_content"
@@ -139,7 +165,6 @@
                 android:textColor="#6B7280"
                 android:layout_marginTop="6dp"/>
 
-
             <!-- Tags -->
             <TextView
                 android:text="Tags"
@@ -154,14 +179,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp">
-
                 <EditText
                     android:id="@+id/etTag"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Enter tag"/>
-
                 <Button
                     android:id="@+id/btnAddTag"
                     android:layout_width="wrap_content"
@@ -191,7 +214,6 @@
                 android:textColor="#6B7280"
                 android:layout_marginTop="4dp"/>
 
-            <!-- Attachment Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -226,7 +248,6 @@
                     app:cornerRadius="16dp"/>
             </LinearLayout>
 
-            <!-- Attachment Preview -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerAttachments"
                 android:layout_width="match_parent"
@@ -250,23 +271,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Last quiz score label -->
+        <TextView
+            android:id="@+id/txtLastScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No quiz taken yet"
+            android:textColor="#7249A9"
+            android:textSize="13sp"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Take AI Quiz button -->
+        <Button
+            android:id="@+id/btnTakeQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="🤖 Take AI Quiz"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#7F13EC"/>
+
         <Button
             android:id="@+id/btnUpdate"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Update Topic"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#7C3AED"/>
+            android:layout_height="48dp"
+            android:text="💾 Update Topic"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#3B28CC"
+            android:layout_marginTop="8dp"/>
 
         <Button
             android:id="@+id/btnDelete"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Delete Topic"
+            android:layout_height="48dp"
+            android:text="🗑 Delete Topic"
             android:textColor="#EF4444"
             android:background="@android:color/transparent"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="4dp"/>
 
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
