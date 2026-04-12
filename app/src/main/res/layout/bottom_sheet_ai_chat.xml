@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,7 +13,7 @@
         android:layout_height="4dp"
         android:layout_gravity="center"
         android:layout_marginTop="12dp"
-        android:background="#CEC2D8"/>
+        android:background="#CEC2D8" />
 
     <!-- Header -->
     <LinearLayout
@@ -29,7 +30,7 @@
             android:text="🤖 LearnKeep AI"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#1E1924"/>
+            android:textColor="#1E1924" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,29 +42,20 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingTop="4dp"
-            android:paddingBottom="4dp"/>
+            android:paddingBottom="4dp" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E9DFEF"/>
+        android:background="#E9DFEF" />
 
     <!-- Chat messages -->
-    <ScrollView
-        android:id="@+id/scrollView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="380dp"
-        android:scrollbars="none"
-        android:clipToPadding="false"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:id="@+id/layoutMessages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-    </ScrollView>
+        android:padding="12dp" />
 
     <!-- Loading indicator -->
     <ProgressBar
@@ -72,7 +64,7 @@
         android:layout_height="24dp"
         android:layout_gravity="center"
         android:indeterminateTint="#7F13EC"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <!-- Input row -->
     <LinearLayout
@@ -95,7 +87,7 @@
             android:background="#FFFFFF"
             android:inputType="textMultiLine"
             android:imeOptions="actionSend"
-            android:maxLines="3"/>
+            android:maxLines="3" />
 
         <ImageButton
             android:id="@+id/btnSend"
@@ -103,9 +95,9 @@
             android:layout_height="48dp"
             android:src="@android:drawable/ic_menu_send"
             android:background="#7F13EC"
-            android:tint="#FFFFFF"
             android:layout_marginStart="8dp"
-            android:contentDescription="Send"/>
+            android:contentDescription="Send"
+            app:tint="#FFFFFF" />
 
     </LinearLayout>
 
