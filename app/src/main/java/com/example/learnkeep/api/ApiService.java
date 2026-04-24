@@ -36,4 +36,18 @@ public interface ApiService {
 
     @POST("gemini/chat")
     Call<GeminiChatResponse> chat(@Body GeminiChatRequest request);
+
+    // Sync UP (device → MongoDB)
+    @POST("sync/knowledge")
+    Call<SyncKnowledgeResponse> syncKnowledge(@Body SyncKnowledgeRequest request);
+
+    @POST("sync/mcq-results")
+    Call<SyncMcqResponse> syncMcqResults(@Body SyncMcqRequest request);
+
+    // Restore DOWN (MongoDB → device)
+    @GET("sync/knowledge")
+    Call<SyncKnowledgeResponse> restoreKnowledge();
+
+    @GET("sync/mcq-results")
+    Call<SyncMcqResponse> restoreMcqResults();
 }

@@ -3,6 +3,7 @@ package com.example.learnkeep;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -88,6 +89,24 @@ public class LoginActivity extends AppCompatActivity {
                             response.body().name,
                             response.body().email,
                             response.body().token);
+
+                    // After saving session on successful login:
+                    SyncManager.restoreFromCloud(LoginActivity.this, new SyncManager.SyncCallback() {
+                        @Override
+                        public void onSuccess(String msg) {
+                            Log.d("Sync", "Data restored from cloud");
+                            // Now navigate to MainActivity
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        }
+                        @Override
+                        public void onFailure(String err) {
+                            Log.e("Sync", "Restore failed: " + err);
+                            // Still go to MainActivity even if restore fails (offline scenario)
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    });
 
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();

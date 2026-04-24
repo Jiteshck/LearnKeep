@@ -3,6 +3,8 @@ const mongoose   = require("mongoose");
 const cors       = require("cors");
 const jwt        = require("jsonwebtoken");
 const axios      = require("axios");
+const Knowledge = require("./models/Knowledge");
+const McqResult = require("./models/McqResult");
 
 require("dotenv").config();
 
@@ -250,6 +252,75 @@ app.put("/update-profile-pic", authMiddleware, async (req, res) => {
         console.error("Profile pic update error:", err);
         res.status(500).json({ success: false });
     }
+});
+// ── SYNC: Upload all topics from device → MongoDB ──────────────────
+app.post("/sync/knowledge", authMiddleware, async (req, res) => {
+  try {
+    const { topics } = req.body; // array of KnowledgeEntity objects
+    if (!topics || !Array.isArray(topics)) {
+      return res.status(400).json({ success: false, message: "topics array required" });
+    }
+
+    const userId = req.user.id;
+    const ops = topics.map(t => ({
+      updateOne: {
+        filter: { userId, localId: t.id },
+        update: { $set: { ...t, userId, localId: t.id } },
+        upsert: true  // insert if not exists, update if exists
+      }
+    }));
+
+    await Knowledge.bulkWrite(ops);
+    res.json({ success: true, synced: topics.length });
+  } catch (err) {
+    console.error("Knowledge sync error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ── SYNC: Upload all MCQ results from device → MongoDB ─────────────
+app.post("/sync/mcq-results", authMiddleware, async (req, res) => {
+  try {
+    const { results } = req.body;
+    if (!results || !Array.isArray(results)) {
+      return res.status(400).json({ success: false, message: "results array required" });
+    }
+
+    const userId = req.user.id;
+    const ops = results.map(r => ({
+      updateOne: {
+        filter: { userId, localId: r.id },
+        update: { $set: { ...r, userId, localId: r.id } },
+        upsert: true
+      }
+    }));
+
+    await McqResult.bulkWrite(ops);
+    res.json({ success: true, synced: results.length });
+  } catch (err) {
+    console.error("MCQ sync error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ── RESTORE: Fetch all topics for this user from MongoDB ───────────
+app.get("/sync/knowledge", authMiddleware, async (req, res) => {
+  try {
+    const topics = await Knowledge.find({ userId: req.user.id }).lean();
+    res.json({ success: true, topics });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ── RESTORE: Fetch all MCQ results for this user from MongoDB ──────
+app.get("/sync/mcq-results", authMiddleware, async (req, res) => {
+  try {
+    const results = await McqResult.find({ userId: req.user.id }).lean();
+    res.json({ success: true, results });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 const PORT = process.env.PORT || 3000;

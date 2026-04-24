@@ -10,6 +10,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
@@ -269,6 +270,11 @@ public class AddKnowledgeActivity extends AppCompatActivity {
 
         new Thread(() -> {
             AppDatabase.getInstance(this).knowledgeDao().insert(entity);
+            // After db.knowledgeDao().insert(entity) or update(entity):
+            SyncManager.syncToCloud(this, new SyncManager.SyncCallback() {
+                @Override public void onSuccess(String msg) { Log.d("Sync", "Backed up to cloud"); }
+                @Override public void onFailure(String err) { Log.e("Sync", "Backup failed: " + err); }
+            });
 
             KnowledgeEntity saved = AppDatabase.getInstance(this)
                     .knowledgeDao().getAll().get(0);
