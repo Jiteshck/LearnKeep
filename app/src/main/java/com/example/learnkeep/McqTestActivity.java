@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -283,6 +284,11 @@ public class McqTestActivity extends AppCompatActivity {
 
         AppDatabase db = AppDatabase.getInstance(this);
         db.mcqResultDao().insert(result);
+        // After db.mcqResultDao().insert(result);
+        SyncManager.syncToCloud(this, new SyncManager.SyncCallback() {
+            @Override public void onSuccess(String msg) { Log.d("SYNC", "MCQ backed up"); }
+            @Override public void onFailure(String err) { Log.e("SYNC", "MCQ backup failed: " + err); }
+        });
 
         // Update KnowledgeEntity with latest score & new confidence
         entity.confidence    = String.valueOf(newConfidence);
